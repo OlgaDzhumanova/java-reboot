@@ -1,7 +1,7 @@
 package ru.sberbank.edu;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Travel Service.
@@ -17,8 +17,10 @@ public class TravelService {
      * @param cityInfo - city info
      * @throws IllegalArgumentException if city already exists
      */
-    public void add(CityInfo cityInfo) {
-        // do something
+    public void add(CityInfo cityInfo) throws IllegalArgumentException {
+            if (!cities.contains(cityInfo) && cityInfo != null) {
+                cities.add(cityInfo);
+            }
     }
 
     /**
@@ -27,15 +29,24 @@ public class TravelService {
      * @param cityName - city name
      * @throws IllegalArgumentException if city doesn't exist
      */
-    public void remove(String cityName) {
-        // do something
+    public void remove(String cityName) throws IllegalArgumentException {
+        String name = "";
+        for (int i = 0; i < cities.size(); i++) {
+            name = cities.get(i).getName();
+            if (name.equals(cityName)) {
+                cities.remove(cities.get(i));
+            }
+        }
     }
 
     /**
      * Get cities names.
      */
     public List<String> citiesNames() {
-        return null;
+        List<String> citiesNames = cities.stream()
+                                  .map(s -> s.getName())
+                                  .collect(Collectors.toList());
+        return citiesNames;
     }
 
     /**
@@ -46,8 +57,16 @@ public class TravelService {
      * @param destCityName - destination city
      * @throws IllegalArgumentException if source or destination city doesn't exist.
      */
-    public int getDistance(String srcCityName, String destCityName) {
-        return 0;
+    public int getDistance(String srcCityName, String destCityName) throws IllegalArgumentException {
+            double earthRadius = 6371.01;
+            GeoPosition srcCity = getPosition(srcCityName).get();
+            GeoPosition destCity = getPosition(destCityName).get();
+            double latSrc = Math.toRadians(srcCity.getLatitude());
+            double lonSrc = Math.toRadians(srcCity.getLongitude());
+            double latDest = Math.toRadians(destCity.getLatitude());
+            double lonDest = Math.toRadians(destCity.getLongitude());
+            return (int) (earthRadius * Math.acos(Math.sin(latSrc) * Math.sin(latDest)
+                    + Math.cos(latSrc) * Math.cos(latDest) * Math.cos(lonSrc - lonDest)));
     }
 
     /**
@@ -57,7 +76,21 @@ public class TravelService {
      * @param radius   - radius in kilometers for search
      * @throws IllegalArgumentException if city with cityName city doesn't exist.
      */
-    public List<String> getCitiesNear(String cityName, int radius) {
-        return null;
+    public List<String> getCitiesNear(String cityName, int radius) throws IllegalArgumentException{
+        List<String> citiesNear =  cities.stream()
+                .map(s -> s.getName())
+                .filter(s -> (getDistance(cityName, s) <= radius) && !s.equals(cityName))
+                .collect(Collectors.toList());
+        return citiesNear;
+    }
+
+    private Optional<GeoPosition> getPosition (String city) {
+        GeoPosition geoPosition = null;
+        for (CityInfo c: cities) {
+            if (c.getName().equals(city)) {
+                geoPosition = c.getPosition();
+            }
+        }
+        return Optional.ofNullable(geoPosition);
     }
 }
