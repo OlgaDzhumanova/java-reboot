@@ -2,7 +2,7 @@ package ru.sberbank.edu.service;
 
 
 import ru.sberbank.edu.model.Car;
-import ru.sberbank.edu.repository.CarRepository;
+import ru.sberbank.edu.service.repository.CarRepository;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -24,6 +24,11 @@ public class CarServiceImpl implements CarService {
         Optional<Car> optCar = carRepository.findById(id);
         Car car = optCar.orElseThrow();
         updateCarModel(car, newModel);
+    }
+
+    @Override
+    public void deleteCar(String id) throws SQLException {
+        carRepository.deleteById(id);
     }
 
     private void updateCarModel(Car car, String newModel) {

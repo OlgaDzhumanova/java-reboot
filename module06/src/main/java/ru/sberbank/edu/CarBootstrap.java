@@ -3,8 +3,8 @@ package ru.sberbank.edu;
 
 import org.h2.tools.Server;
 import ru.sberbank.edu.dbconnection.H2DbEmbedded;
-import ru.sberbank.edu.repository.CarDbRepositoryImpl;
-import ru.sberbank.edu.repository.CarRepository;
+import ru.sberbank.edu.service.repository.CarDbRepositoryImpl;
+import ru.sberbank.edu.service.repository.CarRepository;
 import ru.sberbank.edu.service.CarService;
 import ru.sberbank.edu.service.CarServiceImpl;
 

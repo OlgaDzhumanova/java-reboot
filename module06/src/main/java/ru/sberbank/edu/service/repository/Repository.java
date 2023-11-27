@@ -1,4 +1,4 @@
-package ru.sberbank.edu.repository;
+package ru.sberbank.edu.service.repository;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -12,7 +12,7 @@ public interface Repository<T, I>{
     Set<T> findAll();
 
     Optional<T> findById(I id) throws SQLException;
-    Boolean deleteById(I id);
+    Boolean deleteById(I id) throws SQLException;
 
     Boolean deleteAll();
 }
