@@ -1,4 +1,4 @@
-package ru.sberbank.edu.repository;
+package ru.sberbank.edu.service.repository;
 
 import ru.sberbank.edu.model.Car;
 

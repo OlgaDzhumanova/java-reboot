@@ -1,13 +1,13 @@
-package ru.sberbank.edu.repository;
+package ru.sberbank.edu.service.repository;
 
 
 import ru.sberbank.edu.model.Car;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class CarDbRepositoryImpl implements CarRepository {
     private final Connection connection;
@@ -42,6 +42,41 @@ public class CarDbRepositoryImpl implements CarRepository {
     }
 
     @Override
+    public Set<Car> createAll(Collection<Car> cars) {
+        Set<Car> list = new HashSet<>();
+        for (Car car : cars) {
+            try {
+                createOrUpdate(car);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            list.add(car);
+        }
+        return list;
+    }
+
+    @Override
+    public Set<Car> findAll() {
+        Set<Car> list = new HashSet<>();
+        try {
+            Statement statement = connection.createStatement();
+            String sql = "SELECT * FROM car";
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                String model = resultSet.getString("model");
+                Car car = new Car(id, model);
+                list.add(car);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
+    @Override
     public Optional<Car> findById(String id) throws SQLException {
         // validation
         int rowsCount = countRowsById(id);
@@ -60,8 +95,34 @@ public class CarDbRepositoryImpl implements CarRepository {
     }
 
     @Override
-    public Boolean deleteById(String id) {
-        return null;
+    public Boolean deleteById(String id) throws SQLException {
+        String sql = "DELETE FROM car WHERE id = ?";
+        int rowsCount = countRowsById(id);
+        if (rowsCount == 0) {
+            return false;
+        }
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean deleteAll() {
+        boolean result;
+        String sql = "DROP TABLE car";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.executeUpdate();
+            result = true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
     private int countRowsById(String id) throws SQLException {
@@ -74,4 +135,17 @@ public class CarDbRepositoryImpl implements CarRepository {
         }
         return rowCount;
     }
+
+    @Override
+    public Set<Car> findByModel(String model) {
+        Set<Car> list = new HashSet<>();
+        Set<Car> cars = findAll();
+        for (Car car : cars) {
+            if (car.getModel().equals(model)) {
+                list.add(car);
+            }
+        }
+        return list;
+    }
+
 }
