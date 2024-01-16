@@ -1,0 +1,30 @@
+
+body {
+	width: 1200px;
+    height: 100px; 
+    border: 4px; 
+   background-color: #B2DFDB;
+   padding: 40px 40px 20px 20px;
+}
+
+h3 {
+    color: #263238;
+}
+
+h2 {
+	text-align: center;
+	color: #5D4035;
+}
+
+p {
+	text-align: center
+}
+
+button{
+    width:50%;
+    max-width:100px;
+    min-width:50px;
+    padding: 10px 10px 10px 10px;
+    margin: 15px auto 30px auto;
+    background-color: #C8E6C9;
+    }
