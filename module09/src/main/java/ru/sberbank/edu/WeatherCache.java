@@ -1,20 +1,27 @@
 package ru.sberbank.edu;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Weather cache.
- */
 public class WeatherCache {
 
     private final Map<String, WeatherInfo> cache = new HashMap<>();
-    private WeatherProvider weatherProvider;
+    private final InfoWeatherProvider infoWeatherProvider;
 
     /**
-     * Default constructor.
+     * Constructor.
+     *
+     * @param infoWeatherProvider - weather provider
      */
-    public WeatherCache() {
+
+    @Autowired
+    public WeatherCache(@Qualifier("infoWeatherProvider") InfoWeatherProvider infoWeatherProvider) {
+
+        this.infoWeatherProvider = infoWeatherProvider;
     }
 
     /**
@@ -26,15 +33,19 @@ public class WeatherCache {
      * @param city - city
      * @return actual weather info
      */
-    public WeatherInfo getWeatherInfo(String city) {
-        // should be implemented
-        return null;
+    public synchronized WeatherInfo getWeatherInfo(String city) {
+        WeatherInfo info = infoWeatherProvider.get(city);
+        LocalDateTime dateTime = LocalDateTime.now().plusMinutes(5);
+        if (!cache.containsKey(city) || cache.get(city).getExpiryTime().isAfter(dateTime)) {
+            cache.put(city, info);
+        }
+        return info;
     }
 
     /**
      * Remove weather info from cache.
      **/
     public void removeWeatherInfo(String city) {
-        // should be implemented
+        cache.remove(city);
     }
 }
