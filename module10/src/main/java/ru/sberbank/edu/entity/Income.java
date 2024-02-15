@@ -1,8 +1,23 @@
-package ru.sberbank.edu;
+package ru.sberbank.edu.entity;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 
 public class Income {
+
+    @NotNull(message = "is required")
+    @Min(value = 50000, message = "age must be greater 50000")
     private double sum;
+
+    @NotNull(message = "is required")
+    @Min(value = 1, message = "age must be greater 0")
     private double percentage;
+
+    @NotNull(message = "is required")
+    @Min(value = 1, message = "age must be greater 0")
+    @Max(value = 99, message = "age must be lower 99")
     private int years;
 
     private double totalAmount;
