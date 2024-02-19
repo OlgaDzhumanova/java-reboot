@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    active: h2
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true # ???
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+server:
+  port: 8084
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    ru.edu: info
+  file:
+    name: userService.log
+    path: ./
+
+service:
+  title: User service Api
+  description: User service description
+  version: 1.0 BETA
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
